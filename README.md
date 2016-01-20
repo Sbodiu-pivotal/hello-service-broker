@@ -12,9 +12,9 @@ Build the service
 
 Build and Run it locally 
 
-    cd hello-lang-service
+    cd hello-service
     mvn clean package 
-    java -jar target/hello-lang-service-1.0.0.jar
+    java -jar target/hello-service-1.0.0.jar
 
 Push the service to cloud foundry
 
@@ -22,9 +22,12 @@ Push the service to cloud foundry
 
 Build and Push hello-service-broker
 
-    pushd; cd hello-service-broker
+    cd ../hello-service-broker
     mvn clean package
-    cf push -b java_buildpack
+    cf push -b java_buildpack --no-start
+    cf set-env hello-service-broker SERVICE_URI http://hello-service.local.micropcf.io/hello
+    cf env hello-service-broker
+    cf start hello-service-broker
 
 Register Service Broker with Cloud Foundry
 
@@ -37,10 +40,10 @@ Register Service Broker with Cloud Foundry
 
 Build and Push hello-client
 
-    pushd; cd hello-client
+    cd ../hello-service-client
     mvn clean package
     cf push -b java_buildpack
-    open http://hello-client.local.micropcf.io/hello
+    open http://hello-service-client.local.micropcf.io/hello
 
 Spring Security by default re-generate a new password every time:
 
@@ -51,11 +54,20 @@ Spring Security by default re-generate a new password every time:
 
 Note you can change SERVICE_URI for any other deployment 
 
-    cf set-env hello-service-broker SERVICE_URI http://hello-lang-service.local.micropcf.io/hello
+    cf set-env hello-service-broker SERVICE_URI http://hello-service.local.micropcf.io/hello
     cf env hello-service-broker
     cf restage hello-service-broker
 
+Update service plan and restage application
+
+    cf update-service hello-service -p french
+    cf us hello-service-client hello-service
+    cf bs hello-service-client hello-service
+    cf restage hello-service-client
+
+
 After building, you can push the broker app to Cloud Foundry or deploy it some other way and then [register it to Cloud Foundry](http://docs.cloudfoundry.org/services/managing-service-brokers.html#register-broker).
+
 
 ## Cleanup
 
@@ -65,14 +77,14 @@ cf purge-service-instance or cf purge-service-offering
 cf purge-service-offering -f hello-service
 
 
-    cf d -f hello-client
+    cf d -f hello-service-client
     cf ds -f hello-service
     cf disable-service-access hello-service
     cf delete-service-broker -f Hello
     cf d -f hello-service-broker
-    cf d -f hello-lang-service
+    cf d -f hello-service
 
-## hello-lang-service
+## hello-service
 
 Different language "plans" can be added to the catalog and apps can then bind to these to get a "hello" in the language of the plan.
 

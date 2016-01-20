@@ -10,7 +10,7 @@ import org.springframework.cloud.servicebroker.model.UpdateServiceInstanceReques
 /**
  * An instance of a ServiceDefinition.
  *
- * @author sgreenberg@pivotal.io
+ * @author sbodiu@pivotal.io
  */
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class ServiceInstance {
@@ -84,9 +84,12 @@ public class ServiceInstance {
 	 * ServiceInstance.
 	 * @param request containing details of ServiceInstance
 	 */
-	public ServiceInstance(UpdateServiceInstanceRequest request) {
+	public ServiceInstance(ServiceInstance instance, UpdateServiceInstanceRequest request) {
 		this.id = request.getServiceInstanceId();
+		this.serviceDefinitionId = request.getServiceDefinitionId();
 		this.planId = request.getPlanId();
+		this.organizationGuid = instance.getOrganizationGuid();
+		this.spaceGuid = instance.getSpaceGuid();
 	}
 
 	public String getServiceInstanceId() {

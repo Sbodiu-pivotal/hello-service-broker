@@ -1,0 +1,9 @@
+---
+applications:
+- name: hello-service
+  memory: 384M
+  disk_quota: 256M
+  instances: 1
+  path: target/hello-service-1.0.0.jar
+  env:
+    SPRING_PROFILES_ACTIVE: cloud

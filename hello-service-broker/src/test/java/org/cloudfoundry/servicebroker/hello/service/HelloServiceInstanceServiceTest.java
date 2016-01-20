@@ -11,6 +11,7 @@ import org.springframework.cloud.servicebroker.exception.ServiceInstanceDoesNotE
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceExistsException;
 import org.springframework.cloud.servicebroker.model.CreateServiceInstanceRequest;
 import org.springframework.cloud.servicebroker.model.DeleteServiceInstanceRequest;
+import org.springframework.cloud.servicebroker.model.UpdateServiceInstanceRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
@@ -39,7 +40,7 @@ public class HelloServiceInstanceServiceTest {
         ServiceInstance si = client.getInstance(req.getServiceInstanceId());
         assertNotNull(si);
         assertEquals("orgid", si.getOrganizationGuid());
-        assertEquals("english", si.getPlanId());
+        assertEquals("en", si.getPlanId());
         assertEquals("hello", si.getServiceDefinitionId());
         assertEquals("abc", si.getServiceInstanceId());
         assertEquals("spaceid", si.getSpaceGuid());
@@ -61,11 +62,28 @@ public class HelloServiceInstanceServiceTest {
         ServiceInstance si = client.getInstance(create.getServiceInstanceId());
         assertNotNull(si);
 
-        DeleteServiceInstanceRequest req = new DeleteServiceInstanceRequest(
-                create.getServiceInstanceId(), "hello", "english", create.getServiceDefinition());
+        DeleteServiceInstanceRequest req = TestFixture.getDeleteServiceInstanceRequest();
         service.deleteServiceInstance(req);
         si = client.getInstance(create.getServiceInstanceId());
         assertNull(si);
+    }
+
+    @Test
+    public void serviceInstanceUpdatedSuccessfully() throws Exception {
+        CreateServiceInstanceRequest create = TestFixture.getCreateServiceInstanceRequest();
+        service.createServiceInstance(create);
+        ServiceInstance si = client.getInstance(create.getServiceInstanceId());
+        assertNotNull(si);
+
+        UpdateServiceInstanceRequest req = TestFixture.getUpdateServiceInstanceRequest();
+        service.updateServiceInstance(req);
+        si = client.getInstance(create.getServiceInstanceId());
+        assertNotNull(si);
+        assertEquals("orgid", si.getOrganizationGuid());
+        assertEquals("fr", si.getPlanId());
+        assertEquals("hello", si.getServiceDefinitionId());
+        assertEquals("abc", si.getServiceInstanceId());
+        assertEquals("spaceid", si.getSpaceGuid());
     }
 
     @Test(expected = ServiceInstanceDoesNotExistException.class)

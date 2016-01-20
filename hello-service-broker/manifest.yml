@@ -1,8 +1,9 @@
 ---
 applications:
 - name: hello-service-broker
-  memory: 512M
+  memory: 384M
+  disk_quota: 256M
   instances: 1
   path: target/hello-service-broker-1.0.0.jar
   env:
-    SERVICE_URI: http://hello-lang-service.local.micropcf.io/hello
+    SERVICE_URI: http://hello-service.local.micropcf.io/hello

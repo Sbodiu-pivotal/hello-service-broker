@@ -20,33 +20,17 @@ public class HelloServiceInstanceService implements ServiceInstanceService {
 			CreateServiceInstanceRequest request)
 			throws ServiceInstanceExistsException, ServiceBrokerException {
 		// TODO hello dashboard
-        String serviceInstanceId = request.getServiceInstanceId();
-        String serviceId = request.getServiceDefinitionId();
-        String planId = request.getPlanId();
-
-        if (serviceId == null || planId == null || serviceInstanceId == null) {
-            throw new ServiceBrokerException("invalid CreateServiceInstanceRequest object.");
-        }
-
-        ServiceDefinition serviceDefinition = helloClient.get(serviceId);
-        if (serviceDefinition == null) {
-            throw new ServiceBrokerException("service " + serviceId + " not supported by this broker.");
-        }
-
-        Plan plan = helloClient.get(serviceDefinition, planId);
-        if (plan == null) {
-            throw new ServiceBrokerException("service plan " + planId + " not supported by this broker.");
-        }
+        planExists(request.getServiceDefinitionId(), request.getPlanId());
 
         ServiceInstance instance = helloClient.createInstanceIfAbsent(new ServiceInstance(request));
         if (instance != null) {
-            throw new ServiceInstanceExistsException(serviceInstanceId, request.getServiceDefinitionId());
+            throw new ServiceInstanceExistsException(request.getServiceInstanceId(), request.getServiceDefinitionId());
         }
 
         return new CreateServiceInstanceResponse();
 	}
 
-	@Override
+    @Override
 	public GetLastServiceOperationResponse getLastOperation(GetLastServiceOperationRequest request) {
 		return new GetLastServiceOperationResponse(OperationState.SUCCEEDED);
 	}
@@ -55,9 +39,6 @@ public class HelloServiceInstanceService implements ServiceInstanceService {
 	public DeleteServiceInstanceResponse deleteServiceInstance(
 			DeleteServiceInstanceRequest request) {
         String serviceInstanceId = request.getServiceInstanceId();
-        if (serviceInstanceId == null) {
-            throw new ServiceBrokerException("invalid DeleteServiceInstanceRequest object.");
-        }
 
         ServiceInstance instance = helloClient.getInstance(serviceInstanceId);
         if (instance == null) {
@@ -74,8 +55,24 @@ public class HelloServiceInstanceService implements ServiceInstanceService {
 			UpdateServiceInstanceRequest request)
 			throws ServiceInstanceUpdateNotSupportedException,
 			ServiceBrokerException, ServiceInstanceDoesNotExistException {
-		// TODO not Supported
+		String serviceInstanceId = request.getServiceInstanceId();
+
+		ServiceInstance instance = helloClient.getInstance(serviceInstanceId);
+		if (instance == null) {
+			throw new ServiceInstanceDoesNotExistException(serviceInstanceId);
+		}
+
+		planExists(request.getServiceDefinitionId(), request.getPlanId());
+
+		helloClient.updateInstance(new ServiceInstance(instance, request));
 
 		return new UpdateServiceInstanceResponse();
 	}
+
+    private void planExists(String serviceDefinitionId, String planId) {
+        Plan plan = helloClient.get(serviceDefinitionId, planId);
+        if (plan == null) {
+            throw new ServiceBrokerException("service plan " + planId + " not supported by this broker.");
+        }
+    }
 }

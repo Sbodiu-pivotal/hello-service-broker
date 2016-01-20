@@ -1,0 +1,9 @@
+---
+applications:
+- name: hello-service-client
+  memory: 384M
+  disk_quota: 256M
+  instances: 1
+  path: target/hello-service-client-1.0.0.jar
+  services:
+   - hello-service

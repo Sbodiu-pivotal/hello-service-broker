@@ -52,8 +52,7 @@ class HelloController {
 
 		JsonElement credentials = null;
 		if (contents.isJsonArray()) {
-			credentials = contents.getAsJsonArray().get(0).getAsJsonObject()
-					.get("credentials");
+			credentials = contents.getAsJsonArray().get(0).getAsJsonObject().get("credentials");
 		} else {
 			credentials = contents.getAsJsonObject().get("credentials");
 		}
