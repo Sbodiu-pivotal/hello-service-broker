@@ -5,8 +5,8 @@ import org.springframework.cloud.servicebroker.exception.ServiceBrokerException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceBindingDoesNotExistException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceBindingExistsException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceDoesNotExistException;
+import org.springframework.cloud.servicebroker.model.CreateServiceInstanceAppBindingResponse;
 import org.springframework.cloud.servicebroker.model.CreateServiceInstanceBindingRequest;
-import org.springframework.cloud.servicebroker.model.CreateServiceInstanceBindingResponse;
 import org.springframework.cloud.servicebroker.model.DeleteServiceInstanceBindingRequest;
 import org.springframework.cloud.servicebroker.service.ServiceInstanceBindingService;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class HelloServiceInstanceBindingService implements ServiceInstanceBindin
 	private HelloClient helloClient;
 
 	@Override
-    public CreateServiceInstanceBindingResponse createServiceInstanceBinding(
+    public CreateServiceInstanceAppBindingResponse createServiceInstanceBinding(
 			CreateServiceInstanceBindingRequest request)
 			throws ServiceBrokerException,
 			ServiceInstanceBindingExistsException {
@@ -45,7 +45,8 @@ public class HelloServiceInstanceBindingService implements ServiceInstanceBindin
         Map<String, Object> credentials = helloClient
                 .bindService(bindingId, serviceInstanceId, request.getAppGuid());
 
-		return new CreateServiceInstanceBindingResponse(credentials);
+		return new CreateServiceInstanceAppBindingResponse()
+					.withCredentials(credentials);
 	}
 
 	@Override

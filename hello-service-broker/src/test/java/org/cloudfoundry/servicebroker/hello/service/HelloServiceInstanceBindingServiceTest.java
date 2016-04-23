@@ -10,6 +10,7 @@ import org.springframework.cloud.servicebroker.exception.ServiceBrokerException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceBindingDoesNotExistException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceBindingExistsException;
 import org.springframework.cloud.servicebroker.exception.ServiceInstanceDoesNotExistException;
+import org.springframework.cloud.servicebroker.model.CreateServiceInstanceAppBindingResponse;
 import org.springframework.cloud.servicebroker.model.CreateServiceInstanceBindingRequest;
 import org.springframework.cloud.servicebroker.model.CreateServiceInstanceBindingResponse;
 import org.springframework.cloud.servicebroker.model.DeleteServiceInstanceBindingRequest;
@@ -42,7 +43,7 @@ public class HelloServiceInstanceBindingServiceTest {
             ServiceInstanceBindingExistsException {
         client.createInstanceIfAbsent(instance);
         CreateServiceInstanceBindingRequest c = TestFixture.getCreateServiceInstanceBindingRequest();
-        CreateServiceInstanceBindingResponse sib = service.createServiceInstanceBinding(c);
+        CreateServiceInstanceAppBindingResponse sib = service.createServiceInstanceBinding(c);
         assertNotNull(sib);
 
         Map<String, Object> m = sib.getCredentials();

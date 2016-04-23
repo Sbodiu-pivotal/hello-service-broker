@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 @SpringBootApplication
-public class Application {
+public class HelloService {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(HelloService.class, args);
 	}
 
 	@Bean(name = "hellos")

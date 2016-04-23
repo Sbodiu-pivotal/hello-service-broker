@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class HelloServiceInstanceService implements ServiceInstanceService {
 
-	@Autowired
-	HelloClient helloClient;
+    @Autowired
+    HelloClient helloClient;
 
-	@Override
-	public CreateServiceInstanceResponse createServiceInstance(
-			CreateServiceInstanceRequest request)
-			throws ServiceInstanceExistsException, ServiceBrokerException {
-		// TODO hello dashboard
+    @Override
+    public CreateServiceInstanceResponse createServiceInstance(
+            CreateServiceInstanceRequest request)
+            throws ServiceInstanceExistsException, ServiceBrokerException {
+        // TODO hello dashboard
         planExists(request.getServiceDefinitionId(), request.getPlanId());
 
         ServiceInstance instance = helloClient.createInstanceIfAbsent(new ServiceInstance(request));
@@ -28,16 +28,17 @@ public class HelloServiceInstanceService implements ServiceInstanceService {
         }
 
         return new CreateServiceInstanceResponse();
-	}
+    }
 
     @Override
-	public GetLastServiceOperationResponse getLastOperation(GetLastServiceOperationRequest request) {
-		return new GetLastServiceOperationResponse(OperationState.SUCCEEDED);
-	}
+    public GetLastServiceOperationResponse getLastOperation(GetLastServiceOperationRequest request) {
+        return new GetLastServiceOperationResponse()
+                .withOperationState(OperationState.SUCCEEDED);
+    }
 
-	@Override
-	public DeleteServiceInstanceResponse deleteServiceInstance(
-			DeleteServiceInstanceRequest request) {
+    @Override
+    public DeleteServiceInstanceResponse deleteServiceInstance(
+            DeleteServiceInstanceRequest request) {
         String serviceInstanceId = request.getServiceInstanceId();
 
         ServiceInstance instance = helloClient.getInstance(serviceInstanceId);
@@ -45,29 +46,29 @@ public class HelloServiceInstanceService implements ServiceInstanceService {
             throw new ServiceInstanceDoesNotExistException(serviceInstanceId);
         }
 
-		helloClient.deleteInstance(serviceInstanceId);
+        helloClient.deleteInstance(serviceInstanceId);
 
-		return new DeleteServiceInstanceResponse();
-	}
+        return new DeleteServiceInstanceResponse();
+    }
 
-	@Override
-	public UpdateServiceInstanceResponse updateServiceInstance(
-			UpdateServiceInstanceRequest request)
-			throws ServiceInstanceUpdateNotSupportedException,
-			ServiceBrokerException, ServiceInstanceDoesNotExistException {
-		String serviceInstanceId = request.getServiceInstanceId();
+    @Override
+    public UpdateServiceInstanceResponse updateServiceInstance(
+            UpdateServiceInstanceRequest request)
+            throws ServiceInstanceUpdateNotSupportedException,
+            ServiceBrokerException, ServiceInstanceDoesNotExistException {
+        String serviceInstanceId = request.getServiceInstanceId();
 
-		ServiceInstance instance = helloClient.getInstance(serviceInstanceId);
-		if (instance == null) {
-			throw new ServiceInstanceDoesNotExistException(serviceInstanceId);
-		}
+        ServiceInstance instance = helloClient.getInstance(serviceInstanceId);
+        if (instance == null) {
+            throw new ServiceInstanceDoesNotExistException(serviceInstanceId);
+        }
 
-		planExists(request.getServiceDefinitionId(), request.getPlanId());
+        planExists(request.getServiceDefinitionId(), request.getPlanId());
 
-		helloClient.updateInstance(new ServiceInstance(instance, request));
+        helloClient.updateInstance(new ServiceInstance(instance, request));
 
-		return new UpdateServiceInstanceResponse();
-	}
+        return new UpdateServiceInstanceResponse();
+    }
 
     private void planExists(String serviceDefinitionId, String planId) {
         Plan plan = helloClient.get(serviceDefinitionId, planId);
